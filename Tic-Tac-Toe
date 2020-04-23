@@ -1,0 +1,124 @@
+from Ipython.display import clear_output
+
+#global vars
+board = [' ']*10
+game_state = True
+announce = ''
+
+def reset_board():
+    global board,game_state
+    board = [' ']*10
+    game_state = True
+
+def display_board():
+    """
+    This function prints out the board so the numpad
+    can be used as a reference.
+    :return:
+    """
+    #clear current cell output
+    clear_output()
+
+    #print board
+    print("  " + board[7] + " | " + board[8] + " | " + board[9] + " ")
+    print("----------")
+    print("  " + board[7] + " | " + board[8] + " | " + board[9] + " ")
+    print("----------")
+    print("  " + board[7] + " | " + board[8] + " | " + board[9] + " ")
+
+def win_check(board,player):
+    if(board[7] == board[8] == board[9] == player) or \
+      (board[4] == board[5] == board[6] == player) or \
+      (board[1] == board[2] == board[3] == player) or \
+      (board[7] == board[5] == board[3] == player) or \
+      (board[1] == board[5] == board[9] == player) or \
+      (board[7] == board[4] == board[1] == player) or \
+      (board[8] == board[5] == board[2] == player) or \
+      (board[9] == board[6] == board[3] == player):
+        return True
+
+    else:
+        return False
+
+def full_board_check(board):
+    """checks whether all blanks are filled or not """
+    if " " in board[1:]:
+        return False
+    else:
+        return True
+
+def ask_player(mark):
+    """Asks player where to plaxe their X or O, checks validity"""
+    global board
+    req = 'Choose where to place your' + mark
+    while True:
+        try:
+            choice = int(raw_input(req))
+        except ValueError:
+            print("Sorry!")
+            continue
+
+        if board[choice] == " ":
+            board[choice] = mark
+            break
+        else:
+            print("That space isnt empty")
+            continue
+
+def player_choice(marl):
+    global board,game_state,announce
+    announce = ''
+    #get player input
+    mark = str(mark)
+    #validate input
+    ask_player(mark)
+    if win_check(board,mark):
+        clear_output()
+        display_board()
+        announce = mark +"win!"
+        game_state = False
+
+    #show board
+    clear_output()
+    display_board()
+
+    #check for tie
+    if full_board_check(board):
+        announce = "Tie!"
+        game_state = False
+    return game_state,announce
+
+def play_game():
+    reset_board()
+    global announce
+
+    #set marks
+    X = 'X'
+    o = 'O'
+
+    while True:
+        #show board
+        clear_output()
+        display_board()
+
+        #player X turn
+        game_state,announce = player_choice(X)
+        print announce
+        if game_state == False:
+            break
+
+        #player O turn
+        game_state,announce == player_choice(O)
+        print announce
+        if game_state == False:
+            break
+
+        #ask player for a rematch
+        rematch = raw_input('Would you like to play again? y/n')
+        if rematch == 'y':
+            play_game()
+        else:
+            print "Thanks for playing"
+
+
+play_game()
